@@ -1,0 +1,11 @@
+{
+  "extends": "../shared/typescript-config/base.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true
+  },
+  "include": ["src/**/*", "src/templates/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
+}

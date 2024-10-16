@@ -1,0 +1,59 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: thevinodpatidar
+app: saas-boilerplate
+
+provider:
+  stage: ${opt:stage, 'dev'}
+  profile: ${env:AWS_PROFILE}
+
+stages:
+  default:
+    params:
+      # This is used as the shared secret for generating JWT tokens. For non
+      # production stages, the default value is used. In production, the value
+      # should be set in SSM.
+      sharedTokenSecret: DEFAULT
+      mongodbUri: ${env:MONGODB_URI}
+      sesSenderEmail: ${env:SES_SENDER_EMAIL}
+      verificationTokenSecret: ${env:VERIFICATION_TOKEN_SECRET}
+      resetPasswordTokenSecret: ${env:RESET_PASSWORD_TOKEN_SECRET}
+      frontendUrl: ${env:FRONTEND_URL}
+      # The customDomainName enables support for custom domain names. As long as
+      # this value is false, the subsequent parameters are ignored. However,
+      # they are referenced in the serverless.yml files of the services,
+      # therefore we define defaults such that the variables can be resolved.
+      customDomainNameEnabled: false
+      customDomainName: NA
+      customDomainCertificateARN: NA
+  prod:
+    params:
+      # In production the sharedTokenSecret should be set in SSM, but if it isn
+      # the fallback value is used.
+      sharedTokenSecret: "DEFAULT"
+      mongodbUri: ${env:MONGODB_URI}
+      sesSenderEmail: ${env:SES_SENDER_EMAIL}
+      verificationTokenSecret: ${env:VERIFICATION_TOKEN_SECRET}
+      resetPasswordTokenSecret: ${env:RESET_PASSWORD_TOKEN_SECRET}
+      frontendUrl: ${env:FRONTEND_URL}
+      # In production, the custom domain name is enabled, and therefore the
+      # customDomainCertificateARN value must be set. The README providers
+      # more details on setting up the Certificate.
+      customDomainNameEnabled: true
+      customDomainName: YOUR_DOMAIN_NAME
+      customDomainCertificateARN: YOUR_CERTIFICATE_ARN
+
+services:
+  apiGateway:
+    path: ./api-gateway
+  user:
+    path: ./user
+  organization:
+    path: ./organization
+  web:
+    path: ./website
+    params:
+      apiUrl: ${apiGateway.apiURL}
+  email:
+    path: ./email
+  todo:
+    path: ./todo

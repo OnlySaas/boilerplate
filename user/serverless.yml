@@ -1,0 +1,101 @@
+service: saas-boilerplate-user
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  apiGateway:
+    restApiId:
+      Fn::ImportValue: SaasBoilerplateApiGateway-restApiId
+    restApiRootResourceId:
+      Fn::ImportValue: SaasBoilerplateApiGateway-rootResourceId
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - events:PutEvents
+      Resource: "*"
+
+  environment:
+    PREFIX_PATH: /${self:service}
+    SHARED_TOKEN_SECRET: ${param:sharedTokenSecret}
+    MONGODB_URI: ${param:mongodbUri}
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    VERIFICATION_TOKEN_SECRET: ${param:verificationTokenSecret}
+    RESET_PASSWORD_TOKEN_SECRET: ${param:resetPasswordTokenSecret}
+    FRONTEND_URL: ${param:frontendUrl}
+
+functions:
+  register:
+    handler: src/handlers/register.handler
+    events:
+      - http:
+          path: auth/register
+          method: POST
+          cors: true
+  login:
+    handler: src/handlers/login.handler
+    events:
+      - http:
+          path: auth/login
+          method: POST
+          cors: true
+  current-user:
+    handler: src/handlers/current-user.handler
+    events:
+      - http:
+          path: auth/me
+          method: GET
+          cors: true
+  verify-email:
+    handler: src/handlers/verify-email.handler
+    events:
+      - http:
+          path: auth/verify-email
+          method: POST
+          cors: true
+  forgot-password:
+    handler: src/handlers/forgot-password.handler
+    events:
+      - http:
+          path: auth/forgot-password
+          method: POST
+          cors: true
+  reset-password:
+    handler: src/handlers/reset-password.handler
+    events:
+      - http:
+          path: auth/reset-password
+          method: POST
+          cors: true
+  resend-verification-email:
+    handler: src/handlers/resend-verification-email.handler
+    events:
+      - http:
+          path: auth/resend-verification-email
+          method: POST
+          cors: true
+  update-profile:
+    handler: src/handlers/update-profile.handler
+    events:
+      - http:
+          path: profile
+          method: PUT
+          cors: true
+
+
+# Serverless Framework doesn't support creating DynamoDB tables natively.
+# Instead, we can use the AWS CloudFormation syntax to create the table.
+# resources:
+#   Conditions:
+#     CustomDomainNameEnabled:
+#       Fn::Equals:
+#         - ${param:customDomainNameEnabled}
+#         - true
+#   Outputs:
+#     AuthApiUrl:
+#       Value:
+#         Fn::If:
+#           - CustomDomainNameEnabled
+#           - !Sub "https://${param:customDomainNameAuthAPI}/${self:service}"
+#           - !Sub "https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/${self:service}"

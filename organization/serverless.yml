@@ -1,0 +1,124 @@
+service: saas-boilerplate-organization
+
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  apiGateway:
+    restApiId:
+      "Fn::ImportValue": SaasBoilerplateApiGateway-restApiId
+    restApiRootResourceId:
+      "Fn::ImportValue": SaasBoilerplateApiGateway-rootResourceId
+  environment:
+    PREFIX_PATH: /${self:service}
+    SHARED_TOKEN_SECRET: ${param:sharedTokenSecret}
+    MONGODB_URI: ${param:mongodbUri}
+    VERIFICATION_TOKEN_SECRET: ${param:verificationTokenSecret}
+    FRONTEND_URL: ${param:frontendUrl}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - events:PutEvents
+      Resource: "*"
+
+functions:
+  list-organizations:
+    handler: src/handlers/list-organizations.handler
+    events:
+      - http:
+          path: organizations/
+          method: GET
+          cors: true
+  create-organization:
+    handler: src/handlers/create-organization.handler
+    events:
+      - http:
+          path: organizations/
+          method: POST
+          cors: true
+  update-organization:
+    handler: src/handlers/update-organization.handler
+    events:
+      - http:
+          path: organizations/{organizationId}
+          method: PUT
+          cors: true
+  list-members:
+    handler: src/handlers/list-members.handler
+    events:
+      - http:
+          path: organizations/{organizationId}/members
+          method: GET
+          cors: true
+  organization-switch:
+    handler: src/handlers/switch-organization.handler
+    events:
+      - http:
+          path: organizations/{organizationId}/switch
+          method: PUT
+          cors: true
+  create-invitation:
+    handler: src/handlers/invitation/create-invitation.handler
+    events:
+      - http:
+          path: organizations/{organizationId}/invitations
+          method: POST
+          cors: true
+  get-invitation:
+    handler: src/handlers/invitation/get-invitation.handler
+    events:
+      - http:
+          path: organizations/invitations/{token}
+          method: GET
+          cors: true
+  accept-invitation:
+    handler: src/handlers/invitation/accept-invitation.handler
+    events:
+      - http:
+          path: organizations/invitations/{token}/accept
+          method: GET
+          cors: true
+  revoke-invitation:
+    handler: src/handlers/invitation/revoke-invitation.handler
+    events:
+      - http:
+          path: organizations/{organizationId}/invitations/{invitationId}
+          method: DELETE
+          cors: true
+  list-pending-invitations:
+    handler: src/handlers/invitation/list-pending-invitations.handler
+    events:
+      - http:
+          path: organizations/{organizationId}/invitations/pending
+          method: GET
+          cors: true
+  edit-member-role:
+    handler: src/handlers/edit-member-role.handler
+    events:
+      - http:
+          path: organizations/{organizationId}/members/{memberId}
+          method: PUT
+          cors: true
+  remove-member:
+    handler: src/handlers/remove-member.handler
+    events:
+      - http:
+          path: organizations/{organizationId}/members/{memberId}
+          method: DELETE
+          cors: true
+
+# Serverless Framework doesn't support creating DynamoDB tables natively.
+# Instead, we can use the AWS CloudFormation syntax to create the table.
+# resources:
+  # Conditions:
+  #   CustomDomainNameEnabled:
+  #     Fn::Equals:
+  #       - ${param:customDomainNameEnabled}
+  #       - true
+  # Outputs:
+  #   AuthApiUrl:
+  #     Value:
+  #       Fn::If:
+  #         - CustomDomainNameEnabled
+  #         - !Sub "https://${param:customDomainNameAuthAPI}/${self:service}"
+  #         - !GetAtt HttpApi.ApiEndpoint

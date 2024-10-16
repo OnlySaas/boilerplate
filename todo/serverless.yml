@@ -1,0 +1,56 @@
+service: saas-boilerplate-todo
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  apiGateway:
+    restApiId:
+      "Fn::ImportValue": SaasBoilerplateApiGateway-restApiId
+    restApiRootResourceId:
+      "Fn::ImportValue": SaasBoilerplateApiGateway-rootResourceId
+  environment:
+    PREFIX_PATH: /${self:service}
+    SHARED_TOKEN_SECRET: ${param:sharedTokenSecret}
+    MONGODB_URI: ${param:mongodbUri}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - events:PutEvents
+      Resource: "*"
+
+functions:
+  list-todos:
+    handler: src/handlers/list-todos.handler
+    events:
+      - http:
+          path: /todos/organizations/{organizationId}
+          method: GET
+          cors: true
+  get-todo:
+    handler: src/handlers/get-todo.handler
+    events:
+      - http:
+          path: /todos/{todoId}/organizations/{organizationId}
+          method: GET
+          cors: true
+  create-todo:
+    handler: src/handlers/create-todo.handler
+    events:
+      - http:
+          path: /todos/organizations/{organizationId}
+          method: POST
+          cors: true
+  update-todo:
+    handler: src/handlers/update-todo.handler
+    events:
+      - http:
+          path: /todos/{todoId}/organizations/{organizationId}
+          method: PUT
+          cors: true
+  delete-todo:
+    handler: src/handlers/delete-todo.handler
+    events:
+      - http:
+          path: /todos/{todoId}/organizations/{organizationId}
+          method: DELETE
+          cors: true

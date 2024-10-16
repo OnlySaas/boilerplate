@@ -1,0 +1,20 @@
+{
+  "name": "@saas-boilerplate/email",
+  "version": "1.0.0",
+  "description": "Email service using AWS SES",
+  "scripts": {
+    "start": "serverless offline",
+    "deploy": "serverless deploy"
+  },
+  "dependencies": {
+    "@aws-sdk/client-ses": "^3.100.0",
+    "handlebars": "^4.7.7",
+    "@saas-boilerplate/shared": "file:../shared"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.145",
+    "@types/express": "^4.17.21",
+    "@types/handlebars": "^4.0.40",
+    "@types/node": "^22.5.5"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "extends": "../shared/typescript-config/base.json",
+  "compilerOptions": {
+    "strict": false,
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "paths": {
+      "@shared/*": ["../../shared/src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "serverless.ts"],
+  "exclude": ["node_modules"]
+}

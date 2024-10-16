@@ -1,0 +1,12 @@
+{
+  "name": "@saas-boilerplate/agent",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+    "@aws-sdk/client-eventbridge": "^3.637.0",
+    "@saas-boilerplate/shared": "file:../shared"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.145"
+  }
+}

@@ -1,0 +1,48 @@
+service: saas-boilerplate-api-gateway
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+
+# plugins:
+#   - serverless-domain-manager
+
+# custom:
+#   customDomain:
+#     domainName: api.${param:customDomainName}
+#     certificateArn: ${param:customDomainCertificateARN}
+#     stage: ""
+#     endpointType: regional
+#     apiType: http
+#     autoDomain: true
+#     enabled: ${param:customDomainNameEnabled}
+#     basePath: ${self:service}
+
+resources:
+  Resources:
+    SaasBoilerplateApiGateway:
+      Type: AWS::ApiGateway::RestApi
+      Properties:
+        Name: ${self:service}-${self:provider.stage}
+
+  Outputs:
+    apiGatewayRestApiId:
+      Value:
+        Ref: SaasBoilerplateApiGateway
+      Export:
+        Name: SaasBoilerplateApiGateway-restApiId
+
+    apiGatewayRestApiRootResourceId:
+      Value:
+        Fn::GetAtt:
+          - SaasBoilerplateApiGateway
+          - RootResourceId
+      Export:
+        Name: SaasBoilerplateApiGateway-rootResourceId
+    apiURL:
+      Value:
+        Fn::Sub: "https://${SaasBoilerplateApiGateway}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/"
+      Export:
+        Name: SaasBoilerplateApiGateway-apiURL

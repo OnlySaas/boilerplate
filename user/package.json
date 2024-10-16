@@ -1,0 +1,15 @@
+{
+  "name": "@saas-boilerplate/user",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+    "@aws-sdk/client-eventbridge": "^3.637.0",
+    "@saas-boilerplate/email": "file:../email",
+    "@saas-boilerplate/shared": "file:../shared",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.145"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "saas-boilerplate",
+  "version": "1.0.0",
+  "description": "SaaS Boilerplate for Serverless Framework V.4",
+  "private": true,
+  "workspaces": [
+    "**"
+  ]
+}
