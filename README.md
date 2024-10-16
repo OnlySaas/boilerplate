@@ -45,6 +45,27 @@ dependencies for all services.
 npm install
 ```
 
+**Setup Environment Variables**
+
+Copy the `.env.sample` file to `.env` and set the appropriate variables.
+
+```
+cp .env.sample .env
+```
+
+**Setup MongoDB URI**
+
+Get the MongoDB URI from MongoDB Atlas and set it in the `.env` file.
+
+**Setup Website Environment Variable**
+
+Set the website environment variable in the `.env` file.
+
+```
+cd website/app
+cp .env.sample .env
+```
+
 **Setup AWS Credentials**
 
 If you haven't already, setup your AWS Credentials. You can follow the [AWS Credentials doc](https://www.serverless.com/framework/docs/providers/aws/guide/credentials)
